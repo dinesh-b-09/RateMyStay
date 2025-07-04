@@ -13,4 +13,7 @@ public class ConfigServerApplication {
 		SpringApplication.run(ConfigServerApplication.class, args);
 	}
 
+    //	http://192.168.31.53:8094/aplication/prod
+    // http://192.168.31.53:8094/aplication/default
+	// http://192.168.31.53:8094/aplication/dev
 }
