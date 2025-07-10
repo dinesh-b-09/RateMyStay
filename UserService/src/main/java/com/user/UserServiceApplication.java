@@ -19,3 +19,5 @@ public class UserServiceApplication {
 	}
 
 }
+
+// http://192.168.31.52:8090/actuator/health  - circuit breakers
