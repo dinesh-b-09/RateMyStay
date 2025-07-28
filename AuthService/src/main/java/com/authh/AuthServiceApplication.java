@@ -1,4 +1,4 @@
-package com.apigateway;
+package com.authh;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -6,13 +6,10 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-public class ApiGatewayApplication {
+public class AuthServiceApplication {
 
-	public static void main(String[] args)
-	{
-		SpringApplication.run(ApiGatewayApplication.class, args);
+	public static void main(String[] args) {
+		SpringApplication.run(AuthServiceApplication.class, args);
 	}
 
 }
-
-// http://localhost:8095/USER-SERVICE/users/all -url
