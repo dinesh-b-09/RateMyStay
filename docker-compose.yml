@@ -1,0 +1,192 @@
+#version: "3.7"
+
+services:
+  postgres-rating-db:
+    image: postgres:latest
+    container_name: rating-db-rms
+    environment:
+      POSTGRES_USER: rating
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: ratingdb
+    ports:
+      - "5436:5432"
+    networks:
+      - rms-network
+    volumes:
+      - postgres-rating-data:/var/lib/postgresql/data
+
+  auth:
+    container_name: auth-rms
+    build: ./AuthService
+    ports:
+      - "8095:8095"
+    environment:
+#      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-rms:8094
+#      - SPRING_PROFILES_ACTIVE=default
+      - EUREKA_CLIENT_REGISTER_WITH_EUREKA=true
+      - EUREKA_CLIENT_FETCH_REGISTRY=true
+      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=true
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-rms:8761/eureka
+    networks:
+      - rms-network
+#    depends_on:
+#      - config
+#      - eureka-rms
+
+
+  postgres-auth-db:
+    image: postgres:latest
+    container_name: auth-db-rms
+    environment:
+      POSTGRES_USER: auth
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: authdb
+    ports:
+      - "5433:5432"
+    networks:
+      - rms-network
+    volumes:
+      - postgres-auth-data:/var/lib/postgresql/data
+
+
+  gateway:
+    container_name: gateway-rms
+    build: ./ApiGateway
+    ports:
+      - "8093:8093"
+    environment:
+#      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-rms:8094
+#      - SPRING_PROFILES_ACTIVE=default
+      - EUREKA_CLIENT_REGISTER_WITH_EUREKA=true
+      - EUREKA_CLIENT_FETCH_REGISTRY=true
+      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=true
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-rms:8761/eureka
+    networks:
+      - rms-network
+#    depends_on:
+#      - config
+#      - eureka-rms
+
+
+  config:
+    container_name: config-rms
+    build: ./ConfigServer
+    ports:
+      - "8094:8094"
+    networks:
+      - rms-network
+    environment:
+#      - SPRING_CLOUD_CONFIG_SERVER_GIT_URI=https://github.com/dinesh-b-09/RateMyStay-config
+      - EUREKA_CLIENT_REGISTER_WITH_EUREKA=true
+      - EUREKA_CLIENT_FETCH_REGISTRY=true
+      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=true
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-rms:8761/eureka
+#      - SPRING_PROFILES_ACTIVE=default
+#    depends_on:
+#      - eureka-rms
+
+  hotel:
+    container_name: hotel-rms
+    build: ./HotelService
+    ports:
+      - "8091:8091"
+    networks:
+      - rms-network
+    environment:
+#      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-rms:8094
+#      - SPRING_PROFILES_ACTIVE=default
+      - EUREKA_CLIENT_REGISTER_WITH_EUREKA=true
+      - EUREKA_CLIENT_FETCH_REGISTRY=true
+      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=true
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-rms:8761/eureka
+#    depends_on:
+#      - config
+#      - eureka-rms
+
+  rating:
+    container_name: rating-rms
+    build: ./RatingService
+    ports:
+      - "8092:8092"
+    networks:
+      - rms-network
+    environment:
+#      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-rms:8094
+#      - SPRING_PROFILES_ACTIVE=default
+      - EUREKA_CLIENT_REGISTER_WITH_EUREKA=true
+      - EUREKA_CLIENT_FETCH_REGISTRY=true
+      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=true
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-rms:8761/eureka
+#    depends_on:
+#      - config
+#      - eureka-rms
+
+  user:
+    container_name: user-rms
+    build: ./UserService
+    ports:
+      - "8090:8090"
+    networks:
+      - rms-network
+    environment:
+#      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-rms:8094
+#      - SPRING_PROFILES_ACTIVE=default
+      - EUREKA_CLIENT_REGISTER_WITH_EUREKA=true
+      - EUREKA_CLIENT_FETCH_REGISTRY=true
+      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=true
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-rms:8761/eureka
+#    depends_on:
+#      - config
+#      - eureka-rms
+
+
+
+  eureka-rms:
+    container_name: eureka-rms
+    build: ./ServiceRegistry
+    ports:
+      - "8761:8761"
+    networks:
+      - rms-network
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=default
+
+
+  postgres-user-db:
+    image: postgres:latest
+    container_name: user-db-rms
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: userdb
+    ports:
+      - "5434:5432"
+    networks:
+      - rms-network
+    volumes:
+      - postgres-user-data:/var/lib/postgresql/data
+
+  postgres-hotel-db:
+    image: postgres:latest
+    container_name: hotel-db-rms
+    environment:
+      POSTGRES_USER: hotel
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: hoteldb
+    ports:
+      - "5435:5432"
+    networks:
+      - rms-network
+    volumes:
+      - postgres-hotel-data:/var/lib/postgresql/data
+
+
+networks:
+  rms-network:
+    driver: bridge
+
+volumes:
+  postgres-auth-data:
+  postgres-user-data:
+  postgres-hotel-data:
+  postgres-rating-data:

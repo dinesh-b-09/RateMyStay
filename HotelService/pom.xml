@@ -113,6 +113,7 @@
 	</dependencyManagement>
 
 	<build>
+		<finalName>hotel_docker_app</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
